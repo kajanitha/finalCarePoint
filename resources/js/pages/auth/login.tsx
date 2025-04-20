@@ -58,13 +58,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </div>
 
                     <div className="grid gap-2">
-                        <div className="flex items-center">
+                        <div className="flex items-center ">
                             <Label htmlFor="password">Password</Label>
-                            {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                    Forgot password?
-                                </TextLink>
-                            )}
+                                {canResetPassword && (
+                                    <TextLink href={route('password.request')} className="ml-auto text-sm text-blue-500" tabIndex={5}>
+                                        Forgot password?
+                                    </TextLink>
+                                )}
                         </div>
                         <Input
                             id="password"
@@ -96,9 +96,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-center text-sm">
+                <div className="text-center text-sm text-blue-500">
                     Don't have an account?{' '}
-                    <TextLink href={route('register')} tabIndex={5}>
+                    <TextLink href={route('register')} className="text-blue-500" tabIndex={5}>
                         Sign up
                     </TextLink>
                 </div>

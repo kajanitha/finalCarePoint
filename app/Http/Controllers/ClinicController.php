@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Clinic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 
 class ClinicController extends Controller
 {
@@ -18,13 +19,10 @@ class ClinicController extends Controller
             $longitude = $request->input('longitude');
             $radius = $request->input('radius'); // in kilometers
 
-            // Use a function to calculate distance (Haversine formula)
-            $query->select('*')
-                  ->selectRaw(
-                      '( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) AS distance',
-                      [$latitude, $longitude, $latitude]
-                  )
-                  ->having('distance', '<=', $radius);
+            $point = new Point($latitude, $longitude);
+
+            // Use grimzy spatial function to find clinics within radius (meters)
+            $query->distanceSphere('location', $point, $radius * 1000);
         }
 
         $clinics = $query->get();
@@ -51,11 +49,13 @@ class ClinicController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+
+        $location = new Point($request->input('latitude'), $request->input('longitude'));
+
         $clinic = Clinic::create([
             'name' => $request->input('name'),
             'address' => $request->input('address'),
-            'latitude' => $request->input('latitude'),
-            'longitude' => $request->input('longitude'),
+            'location' => $location,
             'contact_phone' => $request->input('contact_phone'),
             'description' => $request->input('description'),
         ]);
@@ -77,7 +77,13 @@ class ClinicController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $clinic->update($request->all());
+        $data = $request->all();
+
+        if ($request->has('latitude') && $request->has('longitude')) {
+            $data['location'] = new Point($request->input('latitude'), $request->input('longitude'));
+        }
+
+        $clinic->update($data);
         return response()->json($clinic, 200);
     }
 

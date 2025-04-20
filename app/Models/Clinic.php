@@ -4,18 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 
 class Clinic extends Model
 {
-    use HasFactory;
+    use HasFactory, SpatialTrait;
 
     protected $fillable = [
         'name',
         'address',
-        'latitude',
-        'longitude',
         'contact_phone',
         'description',
+        'location',
+    ];
+
+    protected $spatialFields = [
+        'location',
     ];
 
     /**
