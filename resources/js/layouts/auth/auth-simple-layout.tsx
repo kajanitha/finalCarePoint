@@ -22,8 +22,8 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                     </div>
                     <div className="bg-[#f8f0fb] text-black rounded-md p-6">
                     <Link href={route('home')} className="flex flex-col items-center gap-2 font-medium">
-                        <div className="mb-1 flex h-30 w-50 items-center justify-center rounded-md">
-                            <img src="/images/logo.png" alt="Logo" className="h-50 w-50 object-contain" />
+                        <div className="mb-1 flex h-30 w-30 items-center justify-center rounded-md">
+                            <img src="/images/logo.png" alt="Logo" className="h-30 w-30 object-contain" />
                         </div>
                             <span className="sr-only">{title}</span>
                         </Link>

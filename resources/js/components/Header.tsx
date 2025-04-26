@@ -8,8 +8,9 @@ const Header: React.FC = () => {
     return (
         <header className="bg-gray-200 text-white p-4 flex justify-between items-center">
             <Link href="/" className="flex items-center gap-2">
-                <img src="/images/logo.png" alt="CarePoint Logo" className="h-50 w-auto" />
+                <img src="/images/logo.png" alt="CarePoint Logo" className="h-20 w-auto" />
                 <span className="text-xl font-bold text-blue-500">CarePoint</span>
+
             </Link>
             <nav>
                 {!auth || !auth.user ? (

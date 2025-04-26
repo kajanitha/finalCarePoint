@@ -154,7 +154,7 @@ const CarePointHomePage = () => {
                                     <Button
                                         variant="default"
                                         size="lg"
-                                        className="bg-white hover:bg-gray-100 font-semibold px-8 text-blue-500"
+                                        className="bg-gray-400 hover:bg-green-600 font-semibold px-12 text-black"
                                     >
                                         Book an Appointment
                                     </Button>
@@ -341,7 +341,7 @@ const CarePointHomePage = () => {
                             <Button
                                 variant="default"
                                 size="lg"
-                                className="bg-[#6ee7b7] text-[#1e3a8a] hover:bg-[#4dbd9e] font-semibold px-8"
+                                className="bg-[#6ee7b7] text-[#1e3a8a] hover:bg-green-600 font-semibold px-8"
                             >
                                 Book an Appointment
                             </Button>
