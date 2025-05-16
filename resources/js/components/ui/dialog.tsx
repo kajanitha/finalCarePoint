@@ -62,9 +62,10 @@ export const DialogContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ 
 
   return (
     <div
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${className}`}
+      className={`fixed inset-0 bg-blue bg-opacity-10 backdrop-blur-sm flex items-center justify-center z-50 ${className}`}
       {...props}
       onClick={() => setOpen(false)}
+      
     >
       <div className="bg-white rounded p-6" onClick={(e) => e.stopPropagation()}>
         {children}

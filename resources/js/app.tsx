@@ -1,43 +1,59 @@
 import '../css/app.css';
 
-import React from 'react';
+import { router } from '@inertiajs/core';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
-import { initializeTheme } from './hooks/use-appearance';
 import PrivateRoute from './components/PrivateRoute';
+import { initializeTheme } from './hooks/use-appearance';
+import axiosInstance from './lib/axiosInstance';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+const csrfToken = document.head.querySelector('meta[name="csrf-token"]');
+if (!csrfToken) {
+    const meta = document.createElement('meta');
+    meta.name = 'csrf-token';
+    meta.content = (window as any).Laravel?.csrfToken || '';
+    document.head.appendChild(meta);
+}
+
+// Add global Inertia setup to include CSRF token in headers and send credentials
+router.on('before', (event: any) => {
+    const token = document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (token && event.detail && event.detail.visit && event.detail.visit.options) {
+        event.detail.visit.options.headers = {
+            ...(event.detail.visit.options.headers || {}),
+            'X-CSRF-TOKEN': token,
+        };
+        event.detail.visit.options.withCredentials = true;
+    }
+});
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => {
         // Wrap pages with PrivateRoute if needed
         const page = resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
-        if ([
-            'PatientDashboard',
-            'ClinicDashboard',
-            'ClinicList',
-            'ClinicDetails',
-            'AppointmentForm',
-            'UserProfile',
-        ].includes(name)) {
+        if (['PatientDashboard', 'ClinicList', 'ClinicDetails', 'AppointmentForm', 'UserProfile'].includes(name)) {
             return page.then((mod: any) => {
                 const PageComponent = mod.default;
-                mod.default = (props: any) => (
+                const WrappedComponent = (props: any) => (
                     <PrivateRoute>
                         <PageComponent {...props} />
                     </PrivateRoute>
                 );
-                return mod;
+                return { ...mod, default: WrappedComponent };
             });
         }
         return page;
     },
-    setup({ el, App, props }) {
-        const root = createRoot(el);
-
-        root.render(<App {...props} />);
+    setup: ({ el, App, props }) => {
+        // Request CSRF cookie before rendering the app
+        axiosInstance.get('/sanctum/csrf-cookie').then(() => {
+            const root = createRoot(el);
+            root.render(<App {...props} />);
+        });
     },
     progress: {
         color: '#4B5563',

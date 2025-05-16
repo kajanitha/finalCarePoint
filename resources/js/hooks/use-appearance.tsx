@@ -39,12 +39,13 @@ const handleSystemThemeChange = () => {
 };
 
 export function initializeTheme() {
-    const savedAppearance = (localStorage.getItem('appearance') as Appearance) || 'system';
+    // Force light mode regardless of saved preference or system setting
+    const forcedAppearance: Appearance = 'light';
 
-    applyTheme(savedAppearance);
+    applyTheme(forcedAppearance);
 
-    // Add the event listener for system theme changes...
-    mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+    // Remove event listener for system theme changes since we force light mode
+    // mediaQuery()?.addEventListener('change', handleSystemThemeChange);
 }
 
 export function useAppearance() {

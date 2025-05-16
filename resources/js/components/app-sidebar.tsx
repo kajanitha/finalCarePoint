@@ -4,8 +4,9 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
-import AppLogo from './app-logo';
+import { BookOpen, Folder, HouseIcon, LayoutGrid } from 'lucide-react';
+
+import { CalendarCheck, CheckSquare, UserPlus } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -13,26 +14,31 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
-    {
-        title: 'Patient Profile',
-        href: '/user-profile',
-        icon: Folder, // You can replace with a more appropriate icon
-    },
-    {
-        title: 'Appointments',
-        href: '/appointment-form',
-        icon: BookOpen, // You can replace with a more appropriate icon
-    },
 
     {
-        title: 'Nearby Clinics',
-        href: '/Nearby Clinics',
-        icon: BookOpen, // You can replace with a more appropriate icon
+        title: 'Home',
+        href: '/',
+        icon: HouseIcon,
     },
     {
-        title: 'Account Settings',
-        href: '/settings/profile',
-        icon: BookOpen, // You can replace with a more appropriate icon
+        title: 'Register New Patient',
+        href: '/patients/register',
+        icon: UserPlus,
+    },
+    {
+        title: 'Book Appointment',
+        href: '/book-appointment',
+        icon: CalendarCheck,
+    },
+    {
+        title: 'Check-in Patient',
+        href: '/patients/checkin',
+        icon: CheckSquare,
+    },
+    {
+        title: 'Patients',
+        href: '/patients',
+        icon: UserPlus,
     },
 ];
 
@@ -51,24 +57,21 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset" className="bg-gray-100 text-black-600">
+        <Sidebar collapsible="icon" variant="inset" className="text-black-600 bg-gray-100">
             <SidebarHeader className="bg-gray-100">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
-                                <Link href="/" className="flex items-center gap-2">
-                                   <img src="/images/logo.png" alt="CarePoint Logo" className="h-14 w-auto" />
-                                    <span className="text-xl font-bold text-blue-500">CarePoint</span>
-                               
-                               </Link>
+                            <Link href="/dashboard" prefetch className="flex items-center gap-2">
+                                <img src="/images/logo.png" alt="CarePoint Logo" className="h-14 w-auto" />
+                                <span className="text-xl font-bold text-blue-500">CarePoint</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="bg-blue-500">
+            <SidebarContent className="scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-gray-100 y-auto bg-blue-500 px-2 py-4">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 

@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import axiosInstance from '@/lib/axiosInstance';
 
 type LoginForm = {
     email: string;
@@ -28,11 +29,18 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         remember: false,
     });
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = async (e) => {
         e.preventDefault();
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
+        try {
+            // First get CSRF cookie
+            await axiosInstance.get('/sanctum/csrf-cookie');
+            // Then post login data
+            post(route('login'), {
+                onFinish: () => reset('password'),
+            });
+        } catch (error) {
+            console.error('CSRF cookie fetch failed', error);
+        }
     };
 
     return (
@@ -58,13 +66,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </div>
 
                     <div className="grid gap-2">
-                        <div className="flex items-center ">
+                        <div className="flex items-center">
                             <Label htmlFor="password">Password</Label>
-                                {canResetPassword && (
-                                    <TextLink href={route('password.request')} className="ml-auto text-sm text-blue-500" tabIndex={5}>
-                                        Forgot password?
-                                    </TextLink>
-                                )}
+                            {canResetPassword && (
+                                <TextLink href={route('password.request')} className="ml-auto text-sm text-blue-500" tabIndex={5}>
+                                    Forgot password?
+                                </TextLink>
+                            )}
                         </div>
                         <Input
                             id="password"
@@ -90,7 +98,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <Label htmlFor="remember">Remember me</Label>
                     </div>
 
-                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
+                    <Button
+                        type="submit"
+                        className="mt-4 w-full transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-blue-700"
+                        tabIndex={4}
+                        disabled={processing}
+                    >
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Log in
                     </Button>
