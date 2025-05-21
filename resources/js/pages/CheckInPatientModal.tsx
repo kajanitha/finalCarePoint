@@ -100,24 +100,28 @@ const CheckInPatientModal: React.FC = () => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Check-in Patient" />
-            <Card className="mx-auto mt-10 w-196 p-8">
-                <h1 className="mb-4 text-2xl font-bold">Check-in Patient</h1>
-                <div className="space-y-4">
+            <Card className="mx-auto mt-12 max-w-4xl rounded-lg bg-white p-10 shadow-lg">
+                <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-blue-600">Check-in Patient</h1>
+                <div className="space-y-6">
                     <div>
-                        <Label htmlFor="search">Patient Name or NIC</Label>
+                        <Label htmlFor="search" className="text-lg font-semibold text-gray-700">
+                            Patient Name or NIC
+                        </Label>
                         <Input
                             id="search"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Enter patient name or NIC"
-                            className="input w-full bg-blue-50"
+                            className="w-full rounded-md border border-gray-300 bg-blue-50 transition duration-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                         />
                         {patients.length > 0 && (
-                            <ul className="mt-1 max-h-40 overflow-auto rounded border">
+                            <ul className="mt-2 max-h-48 overflow-auto rounded-md border border-gray-300 bg-white shadow-sm">
                                 {patients.map((patient) => (
                                     <li
                                         key={patient.id}
-                                        className={`cursor-pointer p-2 ${selectedPatient?.id === patient.id ? 'bg-blue-200' : ''}`}
+                                        className={`cursor-pointer rounded-md p-3 text-gray-800 transition-colors hover:bg-blue-100 ${
+                                            selectedPatient?.id === patient.id ? 'bg-blue-200 font-semibold' : ''
+                                        }`}
                                         onClick={() => setSelectedPatient(patient)}
                                     >
                                         {patient.full_name} - {patient.nic}
@@ -128,38 +132,66 @@ const CheckInPatientModal: React.FC = () => {
                     </div>
                     {appointment && (
                         <>
-                            <div>
-                                <Label>Appointment Date</Label>
-                                <p>{new Date(appointment.appointment_datetime).toLocaleDateString()}</p>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div>
+                                    <Label className="text-md font-medium text-gray-700">Appointment Date</Label>
+                                    <p className="mt-1 font-semibold text-gray-900">
+                                        {new Date(appointment.appointment_datetime).toLocaleDateString()}
+                                    </p>
+                                </div>
+                                <div>
+                                    <Label className="text-md font-medium text-gray-700">Appointment Time</Label>
+                                    <p className="mt-1 font-semibold text-gray-900">
+                                        {new Date(appointment.appointment_datetime).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        })}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <Label>Appointment Time</Label>
-                                <p>{new Date(appointment.appointment_datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            <div className="mt-6">
+                                <Label htmlFor="contact_number" className="text-md font-medium text-gray-700">
+                                    Update Contact Number
+                                </Label>
+                                <Input
+                                    id="contact_number"
+                                    value={contactNumber}
+                                    onChange={(e) => setContactNumber(e.target.value)}
+                                    className="mt-1 w-full rounded-md border border-gray-300 transition duration-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                />
+                                {errors.contact_number && <p className="mt-1 text-sm text-red-600">{errors.contact_number}</p>}
                             </div>
-                            <div>
-                                <Label htmlFor="contact_number">Update Contact Number</Label>
-                                <Input id="contact_number" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} />
-                                {errors.contact_number && <p className="text-red-600">{errors.contact_number}</p>}
-                            </div>
-                            <div>
-                                <Label htmlFor="payment_collected">
-                                    <input
-                                        type="checkbox"
-                                        id="payment_collected"
-                                        checked={paymentCollected}
-                                        onChange={(e) => setPaymentCollected(e.target.checked)}
-                                    />{' '}
+                            <div className="mt-4 flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    id="payment_collected"
+                                    checked={paymentCollected}
+                                    onChange={(e) => setPaymentCollected(e.target.checked)}
+                                    className="h-5 w-5 rounded border-gray-300 text-blue-600 transition duration-300 focus:ring-blue-500"
+                                />
+                                <Label htmlFor="payment_collected" className="text-md cursor-pointer font-medium text-gray-700 select-none">
                                     Payment Collected
                                 </Label>
                             </div>
-                            <div>
-                                <Label htmlFor="triage_notes">Triage Notes</Label>
-                                <textarea id="triage_notes" value={triageNotes} onChange={(e) => setTriageNotes(e.target.value)} className="input" />
+                            <div className="mt-4">
+                                <Label htmlFor="triage_notes" className="text-md font-medium text-gray-700">
+                                    Triage Notes
+                                </Label>
+                                <textarea
+                                    id="triage_notes"
+                                    value={triageNotes}
+                                    onChange={(e) => setTriageNotes(e.target.value)}
+                                    className="mt-1 min-h-[80px] w-full resize-y rounded-md border border-gray-300 p-2 transition duration-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                />
                             </div>
-                            {errors.api && <p className="text-red-600">{errors.api}</p>}
-                            {successMessage && <p className="text-green-600">{successMessage}</p>}
-                            <div className="flex gap-2">
-                                <Button onClick={handleCheckIn} disabled={loading}>
+                            {errors.api && <p className="mt-3 text-sm font-semibold text-red-600">{errors.api}</p>}
+                            {successMessage && <p className="mt-3 text-sm font-semibold text-green-600">{successMessage}</p>}
+                            <div className="mt-6 flex justify-end">
+                                <Button
+                                    onClick={handleCheckIn}
+                                    disabled={loading}
+                                    className="px-6 py-2 text-lg font-semibold transition duration-300 ease-in-out hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
                                     {loading ? 'Checking in...' : 'Confirm Check-in'}
                                 </Button>
                             </div>

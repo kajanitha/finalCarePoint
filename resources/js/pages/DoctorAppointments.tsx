@@ -101,11 +101,21 @@ export default function DoctorAppointments({ appointments, filters }: Props) {
                                     className="input rounded-md border border-gray-300 px-3 py-2 shadow-sm transition focus:ring-2 focus:ring-yellow-400 focus:outline-none"
                                 >
                                     <option value="">All</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="confirmed">Confirmed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="scheduled" className="hover:blue bg-blue-200 text-blue-800">
+                                        Scheduled
+                                    </option>
+                                    <option value="confirmed" className="bg-green-200 text-green-800">
+                                        Confirmed
+                                    </option>
+                                    <option value="cancelled" className="bg-red-200 text-red-800">
+                                        Cancelled
+                                    </option>
+                                    <option value="pending" className="bg-yellow-200 text-yellow-800">
+                                        Pending
+                                    </option>
+                                    <option value="completed" className="bg-gray-200 text-gray-800">
+                                        Completed
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -128,7 +138,7 @@ export default function DoctorAppointments({ appointments, filters }: Props) {
                                             <tr
                                                 key={appointment.id}
                                                 className="cursor-pointer border border-gray-300 transition-colors duration-300 hover:bg-gray-200"
-                                                onClick={() => (window.location.href = `/appointments/${appointment.id}`)}
+                                                onClick={() => router.visit(`/appointments/${appointment.id}`)}
                                             >
                                                 <td className="border border-gray-300 px-4 py-2">{formatDate(appointment.appointment_date)}</td>
                                                 <td className="border border-gray-300 px-4 py-2">{appointment.appointment_time}</td>

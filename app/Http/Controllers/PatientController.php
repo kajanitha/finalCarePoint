@@ -10,6 +10,15 @@ use Illuminate\Validation\Rule;
 class PatientController extends Controller
 {
     /**
+     * Return total number of patients.
+     */
+    public function getTotalPatients()
+    {
+        $totalPatients = Patient::count();
+        return response()->json(['totalPatients' => $totalPatients]);
+    }
+
+    /**
      * Store a newly created patient in storage.
      */
     public function store(Request $request)

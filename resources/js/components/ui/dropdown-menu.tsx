@@ -39,10 +39,10 @@ function DropdownMenuContent({
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
-        className={cn(
-          "bg-popover bg-opacity-90 backdrop-blur-md text-popover-foreground data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out data-[state=closed]:zoom-out data-[state=open]:animate-zoom-in data-[side=bottom]:animate-slide-in-from-top data-[side=left]:animate-slide-in-from-right data-[side=right]:animate-slide-in-from-left data-[side=top]:animate-slide-in-from-bottom z-50 min-w-[46rem] overflow-hidden rounded-md border border-gray-200 p-1 shadow-lg dark:border-gray-700 transition-transform duration-700 ease-in-out scale-100 origin-[var(--radix-dropdown-menu-content-transform-origin)] bg-yellow-50",
-          className
-        )}
+className={cn(
+  "bg-popover bg-opacity-90 backdrop-blur-md text-popover-foreground ",
+  className
+)}
         {...props}
       />
     </DropdownMenuPrimitive.Portal>

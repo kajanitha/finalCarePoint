@@ -12,6 +12,27 @@ use App\Models\Patient;
 class AppointmentController extends Controller
 {
     /**
+     * Return counts of today's completed and pending appointments.
+     */
+    public function getTodaysAppointmentCounts()
+    {
+        $today = now()->toDateString();
+
+        $completedCount = Appointment::where('appointment_date', $today)
+            ->where('status', 'completed')
+            ->count();
+
+        $pendingCount = Appointment::where('appointment_date', $today)
+            ->where('status', 'pending')
+            ->count();
+
+        return response()->json([
+            'completedCount' => $completedCount,
+            'pendingCount' => $pendingCount,
+        ]);
+    }
+
+    /**
      * Display a listing of the appointments for the authenticated user.
      */
     public function index(Request $request)
@@ -163,19 +184,19 @@ class AppointmentController extends Controller
     /**
      * Check-in the specified appointment.
      */
-    public function checkIn(Request $request, Appointment $appointment)
+    public function checkin(Request $request, Appointment $appointment)
     {
         $validated = $request->validate([
-            'contact_number' => 'nullable|string|max:255',
-            'payment_collected' => 'boolean',
-            'triage_notes' => 'nullable|string',
+            'contact_number' => ['required', 'regex:/^07[0-9]{8}$/'],
+            'payment_collected' => ['required', 'boolean'],
+            'triage_notes' => ['nullable', 'string'],
         ]);
 
         $appointment->update([
-            'contact_number' => $validated['contact_number'] ?? $appointment->contact_number,
-            'payment_collected' => $validated['payment_collected'] ?? false,
-            'triage_notes' => $validated['triage_notes'] ?? null,
-            'check_in_time' => now(),
+            'contact_number' => $validated['contact_number'],
+            'payment_collected' => $validated['payment_collected'],
+            'triage_notes' => $validated['triage_notes'] ?? '',
+            'checked_in_at' => now(),
             'status' => 'confirmed',
         ]);
 
@@ -185,10 +206,15 @@ class AppointmentController extends Controller
     /**
      * Display the specified appointment.
      */
-    public function show(Appointment $appointment)
+    public function show(Appointment $appointment, Request $request)
     {
         $appointment->load(['patient', 'doctor']);
-        return response()->json($appointment);
+        if ($request->wantsJson()) {
+            return response()->json(['appointment' => $appointment]);
+        }
+        return Inertia::render('AppointmentDetails', [
+            'appointment' => $appointment,
+        ]);
     }
 
     /**
@@ -203,7 +229,7 @@ class AppointmentController extends Controller
             'reason' => 'sometimes|string|max:1000',
             'confirmation_sent' => 'sometimes|boolean',
             'notes' => 'nullable|string|max:2000',
-            'status' => [ 'sometimes', Rule::in(['pending', 'confirmed', 'cancelled'])],
+            'status' => [ 'sometimes', Rule::in(['pending', 'confirmed', 'cancelled', 'completed'])],
         ]);
 
         $appointment->update($validated);
@@ -219,5 +245,23 @@ class AppointmentController extends Controller
         $appointment->delete();
 
         return response()->json(['message' => 'Appointment deleted successfully']);
+    }
+
+    /**
+     * Get the upcoming appointment for a patient.
+     */
+    public function upcoming($patientId)
+    {
+        $appointment = Appointment::where('patient_id', $patientId)
+            ->where('appointment_date', '>=', now()->toDateString())
+            ->orderBy('appointment_date', 'asc')
+            ->orderBy('appointment_time', 'asc')
+            ->first();
+
+        if (!$appointment) {
+            return response()->json(null, 404);
+        }
+
+        return response()->json($appointment);
     }
 }

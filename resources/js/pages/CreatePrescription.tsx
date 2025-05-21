@@ -103,7 +103,7 @@ const CreatePrescription: React.FC = () => {
                                 <SelectValue placeholder="Select patient" />
                             </SelectTrigger>
                             <SelectContent>
-                                {(patients ?? []).map((patient) => (
+                                {patients.map((patient) => (
                                     <SelectItem key={patient.id} value={patient.id.toString()}>
                                         {patient.full_name}
                                     </SelectItem>
@@ -121,7 +121,7 @@ const CreatePrescription: React.FC = () => {
                                 <SelectValue placeholder="Select medication" />
                             </SelectTrigger>
                             <SelectContent>
-                                {(medications ?? []).map((med) => (
+                                {medications.map((med) => (
                                     <SelectItem key={med.id} value={med.id.toString()}>
                                         {med.name}
                                     </SelectItem>

@@ -7,6 +7,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\PatientController;
 
+Route::get('/patients/total', [PatientController::class, 'getTotalPatients'])->middleware('auth:sanctum');
+
+Route::get('/appointments/today/counts', [AppointmentController::class, 'getTodaysAppointmentCounts'])->middleware('auth:sanctum');
+
 // Authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -16,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Add patients list API route
     Route::get('/patients', [PatientController::class, 'apiIndex']);
     Route::post('/patients', [PatientController::class, 'store']);
+    Route::get('/patients/search', [PatientController::class, 'search']); // Added GET route for patient search
 
     // Add delete patient route
     Route::delete('/patients/{patient}', [PatientController::class, 'destroy']);
@@ -53,23 +58,7 @@ Route::post('/appointments/{appointment}/cancel', [AppointmentController::class,
 // Cancel appointment by patient (authenticated user)
 Route::post('/appointments/{appointment}/cancel-by-user', [AppointmentController::class, 'cancelByUser'])->middleware('auth:sanctum');
 
-// Doctor routes
-//Route::get('/doctors', [DoctorController::class, 'index']);
-//Route::get('/doctors/{doctor}', [DoctorController::class, 'show']);
-//Route::post('/doctors', [DoctorController::class, 'store'])->middleware('auth:sanctum', 'role:clinic_admin');
-//Route::put('/doctors/{doctor}', [DoctorController::class, 'update'])->middleware('auth:sanctum', 'role:clinic_admin');
-//Route::delete('/doctors/{doctor}', [DoctorController::class, 'destroy'])->middleware('auth:sanctum', 'role:clinic_admin');
-
-// Schedule routes
-//Route::get('/schedules', [ScheduleController::class, 'index']);
-//Route::get('/schedules/{schedule}', [ScheduleController::class, 'show']);
-//Route::post('/schedules', [ScheduleController::class, 'store'])->middleware('auth:sanctum', 'role:clinic_admin');
-//Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->middleware('auth:sanctum', 'role:clinic_admin');
-//Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->middleware('auth:sanctum', 'role:clinic_admin');
-
-// Review routes
-//Route::get('/reviews', [ReviewController::class, 'index']);
-//Route::get('/reviews/{review}', [ReviewController::class, 'show']);
-//Route::post('/reviews', [ReviewController::class, 'store'])->middleware('auth:sanctum');
-//Route::put('/reviews/{review}', [ReviewController::class, 'update'])->middleware('auth:sanctum', 'role:clinic_admin');
-//Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->middleware('auth:sanctum', 'role:clinic_admin');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/appointments/upcoming/{patient}', [AppointmentController::class, 'upcoming']);
+    Route::post('/appointments/checkin/{appointment}', [AppointmentController::class, 'checkin']);
+});
