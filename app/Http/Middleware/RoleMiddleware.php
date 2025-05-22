@@ -30,7 +30,7 @@ class RoleMiddleware
         // Adjust this logic based on your User model's role implementation
         foreach ($rolesArray as $role) {
             $role = trim($role);
-            if ($role === 'admin' && $user->is_admin) {
+            if ($role === 'admin' && $user->role === 'admin') {
                 return $next($request);
             }
             if (isset($user->role) && $user->role === $role) {

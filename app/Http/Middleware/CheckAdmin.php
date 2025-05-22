@@ -15,7 +15,7 @@ class CheckAdmin
     {
         $user = Auth::user();
 
-        if (!$user || !$user->is_admin) {
+        if (!$user || $user->role !== 'admin') {
             // Redirect to home or any other page if not admin
             return redirect('/');
         }
