@@ -97,3 +97,22 @@ export const DialogFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ c
     {children}
   </div>
 );
+
+export const DialogClose: React.FC<{ asChild?: boolean; children: React.ReactNode }> = ({ asChild = false, children }) => {
+  const context = useContext(DialogContext);
+  if (!context) {
+    throw new Error('DialogClose must be used within a Dialog');
+  }
+  const { setOpen } = context;
+
+  const child = React.Children.only(children);
+  const props = {
+    onClick: () => setOpen(false),
+  };
+
+  if (asChild && React.isValidElement(child)) {
+    return React.cloneElement(child, props);
+  }
+
+  return <button {...props}>{children}</button>;
+};
