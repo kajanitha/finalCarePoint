@@ -18,8 +18,18 @@ interface Medication {
     name: string;
 }
 
+interface Patient {
+    id: number;
+    full_name: string;
+}
+
+interface PageProps {
+    patients: Patient[];
+    medications: Medication[];
+}
+
 interface FormData {
-    [key: string]: any;
+    [key: string]: string;
     patient_id: string;
     medication_id: string;
     dosage: string;
@@ -28,8 +38,14 @@ interface FormData {
     notes: string;
 }
 
+interface ApiError {
+    status?: number;
+    errors?: Record<string, string[]>;
+    api?: string;
+}
+
 const CreatePrescription: React.FC = () => {
-    const { patients, medications } = usePage().props as unknown as { patients: { id: number; full_name: string }[]; medications: Medication[] };
+    const { patients, medications } = usePage().props as unknown as PageProps;
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         patient_id: '',
@@ -44,7 +60,7 @@ const CreatePrescription: React.FC = () => {
     const [apiError, setApiError] = React.useState<string>('');
 
     const validate = () => {
-        const newErrors: { [key: string]: string } = {};
+        const newErrors: Record<string, string> = {};
         if (data.patient_id === '') newErrors.patient_id = 'Patient is required';
         if (data.medication_id === '') newErrors.medication_id = 'Medication is required';
         if (data.dosage === '') newErrors.dosage = 'Dosage is required';
@@ -52,6 +68,12 @@ const CreatePrescription: React.FC = () => {
         if (data.duration === '') newErrors.duration = 'Duration is required';
         return Object.keys(newErrors).length === 0;
     };
+
+    React.useEffect(() => {
+        if (apiError === undefined) {
+            setApiError('');
+        }
+    }, [apiError]);
 
     const handleSubmit = () => {
         if (!validate()) return;
@@ -62,16 +84,18 @@ const CreatePrescription: React.FC = () => {
                 setSuccessMessage('Prescription created successfully!');
                 setApiError('');
             },
-            onError: (error: any) => {
+            onError: (error: ApiError) => {
                 if (error && typeof error === 'object') {
                     if ('status' in error && error.status === 401) {
                         setApiError('You are not authenticated. Please login.');
                     } else if ('status' in error && error.status === 422) {
                         const validationErrors = error.errors || {};
-                        const messages = Object.values(validationErrors).flat().join(' ');
+                        const messages = Object.values(validationErrors)
+                            .flatMap((arr) => arr)
+                            .join(' ');
                         setApiError(messages || 'Validation failed. Please check your input.');
                     } else if ('api' in error) {
-                        setApiError(error.api);
+                        setApiError(error.api || 'Failed to create prescription. Please try again.');
                     } else {
                         setApiError('Failed to create prescription. Please try again.');
                     }

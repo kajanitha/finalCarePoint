@@ -98,7 +98,6 @@ const PatientRegistrationForm: React.FC = () => {
     const [provinces, setProvinces] = useState<string[]>([]);
     const [toastMessage, setToastMessage] = useState('');
     const [toastVisible, setToastVisible] = useState(false);
-
     useEffect(() => {
         if (data.district) {
             setProvinces(provincesByDistrict[data.district] || []);
@@ -109,26 +108,7 @@ const PatientRegistrationForm: React.FC = () => {
             setProvinces([]);
             setData('province', '');
         }
-    }, [data.district]);
-
-    const validate = () => {
-        const newErrors: { [key: string]: string } = {};
-        if (!data.full_name) newErrors.full_name = 'Full Name is required';
-        if (!data.nic) newErrors.nic = 'NIC is required';
-        if (!data.date_of_birth) newErrors.date_of_birth = 'Date of Birth is required';
-        if (!data.gender) newErrors.gender = 'Gender is required';
-        if (!data.street_address) newErrors.street_address = 'Street Address is required';
-        if (!data.city) newErrors.city = 'City is required';
-        if (!data.district) newErrors.district = 'District is required';
-        if (!data.province) newErrors.province = 'Province is required';
-        if (!data.contact_number) newErrors.contact_number = 'Contact Number is required';
-        else if (!/^07\d{8}$/.test(data.contact_number)) newErrors.contact_number = 'Invalid Sri Lankan mobile number';
-        if (!data.emergency_contact_name) newErrors.emergency_contact_name = 'Emergency Contact Name is required';
-        if (!data.emergency_contact_number) newErrors.emergency_contact_number = 'Emergency Contact Number is required';
-        if (!data.emergency_contact_relationship) newErrors.emergency_contact_relationship = 'Emergency Contact Relationship is required';
-        if (!data.marital_status) newErrors.marital_status = '';
-        return newErrors;
-    };
+    }, [data.district, data.province, setData]);
 
     const handleChange = (field: string, value: string) => {
         setData(field as keyof typeof data, value);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface CalendarProps {
   mode: 'single' | 'range';
@@ -15,11 +15,33 @@ export const Calendar: React.FC<CalendarProps> = ({
   disabled,
   initialFocus,
 }) => {
-  // Basic placeholder calendar component
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (initialFocus && buttonRef.current) {
+      buttonRef.current.focus();
+    }
+  }, [initialFocus]);
+
+  const handleClick = () => {
+    const dateToSelect = selected || new Date();
+    if (!disabled || (disabled && !disabled(dateToSelect))) {
+      onSelect(dateToSelect);
+    }
+  };
+
   return (
     <div className="border rounded p-4">
-      <p>Calendar component placeholder</p>
-      {/* Implement calendar UI or integrate a calendar library */}
+      <p>Calendar mode: {mode}</p>
+      <p>Selected date: {selected ? selected.toDateString() : 'None'}</p>
+      <button
+        ref={buttonRef}
+        onClick={handleClick}
+        disabled={disabled ? disabled(selected || new Date()) : false}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+      >
+        Select Date
+      </button>
     </div>
   );
 };

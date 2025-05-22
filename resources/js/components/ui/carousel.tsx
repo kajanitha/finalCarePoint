@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface CarouselProps {
   opts?: {
@@ -9,7 +9,7 @@ interface CarouselProps {
   children: React.ReactNode;
 }
 
-export const Carousel: React.FC<CarouselProps> = ({ opts, className = '', children }) => {
+export const Carousel: React.FC<CarouselProps> = ({ className = '', children }) => {
   // Basic placeholder carousel component
   return <div className={`overflow-x-auto whitespace-nowrap ${className}`}>{children}</div>;
 };

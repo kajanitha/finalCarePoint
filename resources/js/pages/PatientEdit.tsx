@@ -5,6 +5,28 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import AppLayout from '../layouts/app-layout';
 
+interface Patient {
+    id: number;
+    full_name: string;
+    nic: string;
+    date_of_birth: string;
+    gender: string;
+    street_address: string;
+    city: string;
+    district: string;
+    province: string;
+    contact_number: string;
+    email_address: string;
+    marital_status: string;
+    emergency_contact_name: string;
+    emergency_contact_number: string;
+    emergency_contact_relationship: string;
+    blood_group: string;
+    known_allergies: string;
+    current_medications: string;
+    past_medical_history: string;
+}
+
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Patient List', href: '/patients' },
@@ -16,7 +38,7 @@ const maritalStatusOptions = ['Single', 'Married', 'Divorced', 'Widowed'];
 const bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const PatientEdit: React.FC = () => {
-    const { patient } = usePage().props as unknown as { patient: any };
+    const { patient } = usePage().props as unknown as { patient: Patient };
 
     const { data, setData, put, processing, errors } = useForm({
         full_name: patient.full_name || '',

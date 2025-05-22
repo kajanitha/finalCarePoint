@@ -2,8 +2,21 @@ import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
 import { Button } from './ui/button';
 
+interface Auth {
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+        // Add other user properties as needed
+    } | null;
+}
+
+interface PageProps {
+    auth?: Auth;
+}
+
 const Header: React.FC = () => {
-    const { auth } = usePage().props as any;
+    const { auth } = usePage().props as PageProps;
 
     return (
         <header className="flex items-center justify-between bg-gray-200 p-4 text-white">

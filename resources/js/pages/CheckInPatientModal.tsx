@@ -12,17 +12,39 @@ const breadcrumbs = [
     { title: 'Check-in Patient', href: '/doctor/appointments' },
 ];
 
+interface Patient {
+    id: number;
+    full_name: string;
+    nic: string;
+    contact_number?: string;
+}
+
+interface Appointment {
+    id: number;
+    appointment_datetime: string;
+}
+
+interface AxiosErrorResponse {
+    response: {
+        data: {
+            errors: {
+                [key: string]: string[];
+            };
+        };
+    };
+}
+
 const CheckInPatientModal: React.FC = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [patients, setPatients] = useState<any[]>([]);
-    const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
-    const [appointment, setAppointment] = useState<any | null>(null);
-    const [contactNumber, setContactNumber] = useState('');
-    const [paymentCollected, setPaymentCollected] = useState(false);
-    const [triageNotes, setTriageNotes] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [patients, setPatients] = useState<Patient[]>([]);
+    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+    const [appointment, setAppointment] = useState<Appointment | null>(null);
+    const [contactNumber, setContactNumber] = useState<string>('');
+    const [paymentCollected, setPaymentCollected] = useState<boolean>(false);
+    const [triageNotes, setTriageNotes] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [successMessage, setSuccessMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState<string>('');
 
     useEffect(() => {
         if (searchTerm.length >= 3) {
@@ -81,9 +103,10 @@ const CheckInPatientModal: React.FC = () => {
                 { headers: { 'Content-Type': 'application/json' } },
             );
             setSuccessMessage('Patient checked in successfully!');
-        } catch (error: any) {
-            if (error.response && error.response.data && error.response.data.errors) {
-                const apiErrors = error.response.data.errors;
+        } catch (error: unknown) {
+            const axiosError = error as AxiosErrorResponse;
+            if (axiosError && axiosError.response && axiosError.response.data && axiosError.response.data.errors) {
+                const apiErrors = axiosError.response.data.errors;
                 const formattedErrors: { [key: string]: string } = {};
                 for (const key in apiErrors) {
                     formattedErrors[key] = apiErrors[key][0];

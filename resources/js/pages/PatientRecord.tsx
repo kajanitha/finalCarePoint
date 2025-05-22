@@ -50,14 +50,14 @@ const PatientRecord: React.FC = () => {
     const patient = props.patient as Patient | undefined;
 
     // Helper function to convert patient data to CSV string
-    const convertToCSV = (obj: any) => {
+    const convertToCSV = (obj: Patient) => {
         const array = [obj];
-        const keys = Object.keys(obj);
+        const keys = Object.keys(obj) as (keyof Patient)[];
         const csvRows = [];
 
         csvRows.push(keys.join(','));
         for (const row of array) {
-            const values = keys.map((k) => {
+            const values = keys.map((k: keyof Patient) => {
                 const escaped = ('' + (row[k] ?? '')).replace(/"/g, '\\"');
                 return `"${escaped}"`;
             });

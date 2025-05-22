@@ -36,6 +36,16 @@ const PatientList: React.FC = () => {
     const [toastType, setToastType] = useState<'success' | 'error'>('success');
     const [showToast, setShowToast] = useState(false);
 
+    // Auto hide toast after 3 seconds
+    useEffect(() => {
+        if (showToast) {
+            const timer = setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showToast]);
+
     const exportToCSV = () => {
         if (!filteredPatients || filteredPatients.length === 0) {
             alert('No patients to export.');
@@ -47,7 +57,7 @@ const PatientList: React.FC = () => {
         let csvContent = 'data:text/csv;charset=utf-8,';
         csvContent += headers.join(',') + '\r\n';
         rows.forEach((rowArray) => {
-            let row = rowArray.map((item) => `"${item}"`).join(',');
+            const row = rowArray.map((item) => `"${item}"`).join(',');
             csvContent += row + '\r\n';
         });
 
@@ -191,6 +201,42 @@ const PatientList: React.FC = () => {
                             </tbody>
                         </table>
                     </>
+                )}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="mt-4 flex justify-center space-x-4">
+                        <button
+                            onClick={goToPreviousPage}
+                            disabled={currentPage === 1}
+                            className="rounded-md bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+                        <span className="flex items-center font-semibold text-gray-700">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            onClick={goToNextPage}
+                            disabled={currentPage === totalPages}
+                            className="rounded-md bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+
+                {/* Toast Notification */}
+                {showToast && (
+                    <div
+                        className={`fixed right-4 bottom-4 z-50 rounded-md px-6 py-3 font-semibold text-white shadow-lg ${
+                            toastType === 'success' ? 'bg-green-600' : 'bg-red-600'
+                        }`}
+                        role="alert"
+                        aria-live="assertive"
+                    >
+                        {toastMessage}
+                    </div>
                 )}
 
                 {/* Confirmation Dialog */}

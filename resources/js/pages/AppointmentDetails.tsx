@@ -31,7 +31,7 @@ type AppointmentType = {
 export default function AppointmentDetails() {
     const { appointment: initialAppointment } = usePage<{ appointment: AppointmentType }>().props; // Directly access initial prop
     const [appointment, setAppointment] = useState<AppointmentType | null>(initialAppointment);
-    const { data, setData, processing, errors } = useForm({
+    const { data, setData, processing } = useForm({
         notes: '',
         status: '',
     });

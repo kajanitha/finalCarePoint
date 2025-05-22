@@ -31,11 +31,6 @@ interface Appointment {
     late?: boolean;
 }
 
-interface Activity {
-    message: string;
-    date: string;
-}
-
 interface TodaysAppointment {
     id: number;
     appointment_date: string;
@@ -65,10 +60,8 @@ const breadcrumbs = [
 
 export default function Dashboard() {
     const [nextAppointment, setNextAppointment] = useState<Appointment | null>(null);
-    const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
     const [todaysAppointments, setTodaysAppointments] = useState<TodaysAppointment[]>([]);
     const [filteredAppointments, setFilteredAppointments] = useState<TodaysAppointment[]>([]);
-    const [filterTime, setFilterTime] = useState<string>('');
     const [checkedInPatients, setCheckedInPatients] = useState<CheckedInPatient[]>([]);
     const [searchPatient, setSearchPatient] = useState('');
     const [notificationsCount, setNotificationsCount] = useState(0);
@@ -97,12 +90,6 @@ export default function Dashboard() {
             .then(() => {
                 // Fetch next appointment from API
                 fetchNextAppointment();
-
-                // Fetch recent activity from API
-                fetch('/api/activity/recent')
-                    .then((res) => res.json())
-                    .then((data) => setRecentActivity(data))
-                    .catch((err) => console.error('Error fetching recent activity:', err));
 
                 // Fetch today's appointments for GP/Receptionist
                 fetchTodaysAppointments();
@@ -171,17 +158,8 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
-        if (filterTime.trim() === '') {
-            setFilteredAppointments(todaysAppointments);
-        } else {
-            const filtered = todaysAppointments.filter((appointment) => appointment.appointment_time.startsWith(filterTime));
-            setFilteredAppointments(filtered);
-        }
-    }, [filterTime, todaysAppointments]);
-
-    const openCancelDialog = () => {
-        setIsCancelDialogOpen(true);
-    };
+        setFilteredAppointments(todaysAppointments);
+    }, [todaysAppointments]);
 
     const closeCancelDialog = () => {
         setIsCancelDialogOpen(false);

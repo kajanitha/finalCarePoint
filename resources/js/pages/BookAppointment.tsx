@@ -20,7 +20,8 @@ interface Patient {
     nic: string;
 }
 
-interface AppointmentFormData extends Record<string, any> {
+interface AppointmentFormData {
+    [key: string]: string | boolean;
     patient_id: string;
     appointment_type: string;
     appointment_date: string;
@@ -28,6 +29,12 @@ interface AppointmentFormData extends Record<string, any> {
     reason: string;
     confirmation_sent: boolean;
     notes: string;
+}
+
+interface ApiError {
+    status?: number;
+    errors?: Record<string, string[]>;
+    api?: string;
 }
 
 const BookAppointment: React.FC = () => {
@@ -65,15 +72,15 @@ const BookAppointment: React.FC = () => {
                 setSuccessMessage('Appointment booked successfully!');
                 setApiError('');
             },
-            onError: (error: any) => {
+            onError: (error: ApiError) => {
                 if (error && typeof error === 'object') {
-                    if ('status' in error && error.status === 401) {
+                    if (error.status === 401) {
                         setApiError('You are not authenticated. Please login.');
-                    } else if ('status' in error && error.status === 422) {
+                    } else if (error.status === 422) {
                         const validationErrors = error.errors || {};
                         const messages = Object.values(validationErrors).flat().join(' ');
                         setApiError(messages || 'Validation failed. Please check your input.');
-                    } else if ('api' in error) {
+                    } else if (error.api) {
                         setApiError(error.api);
                     } else {
                         setApiError('Failed to book appointment. Please try again.');

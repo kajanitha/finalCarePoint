@@ -19,13 +19,23 @@ interface Medication {
 }
 
 interface FormData {
-    [key: string]: any;
+    [key: string]: string | number | boolean | File | null | undefined;
     patient_id: string;
     medication_id: string;
     dosage: string;
     frequency: string;
     duration: string;
     notes: string;
+}
+
+interface ApiError {
+    status?: number;
+    errors?: Record<string, string[]>;
+    api?: string;
+}
+
+function isApiError(error: unknown): error is ApiError {
+    return typeof error === 'object' && error !== null && ('status' in error || 'errors' in error || 'api' in error);
 }
 
 const CreatePrescription: React.FC = () => {
@@ -62,15 +72,15 @@ const CreatePrescription: React.FC = () => {
                 setSuccessMessage('Prescription created successfully!');
                 setApiError('');
             },
-            onError: (error: any) => {
-                if (error && typeof error === 'object') {
-                    if ('status' in error && error.status === 401) {
+            onError: (error: unknown) => {
+                if (isApiError(error)) {
+                    if (error.status === 401) {
                         setApiError('You are not authenticated. Please login.');
-                    } else if ('status' in error && error.status === 422) {
+                    } else if (error.status === 422) {
                         const validationErrors = error.errors || {};
                         const messages = Object.values(validationErrors).flat().join(' ');
                         setApiError(messages || 'Validation failed. Please check your input.');
-                    } else if ('api' in error) {
+                    } else if (error.api) {
                         setApiError(error.api);
                     } else {
                         setApiError('Failed to create prescription. Please try again.');
